@@ -115,19 +115,19 @@ def flipAndRotate(img):
 def _print():
     os.system('cls')
     print(
-        "Running preprocessing phase on dataset: ", image_dir,
-        "\nHand Straightening | Hand Detection | CLAHE filter | Rescale | Random Flip And Rotate"
-    )
-    print("Running time: %ss" % ("{:.2f}".format(time.time() - start_time)))
-    print(f"proccessed images: %s/%s (%%%s)" %
-          (count, img_count, int((count / img_count * 100))))
-    print("hand detection succsess rate: %", int((suc / count) * 100))
-
+        "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
+        "\nInput directory:  ", image_dir,
+        "\nOutput directory: ", output_dir,
+        "\nMethods: Hand Straightening |Hand Detection |CLAHE filter |Rescale |Random Flip And Rotate",
+        "\nRunning time: %ss" % ("{:.2f}".format(time.time() - start_time)),
+        f"\nproccessed images: %s/%s (%%%s)" %(count, img_count, int((count / img_count * 100))),
+        "\nHand detection succsess rate: %", int(suc / count * 100))
 
 mp_drawing = mp.solutions.drawing_utils
 mphands = mp.solutions.hands
 hands = mphands.Hands()
-image_dir = str(sys.argv[1][:-1])  # path to the directory containing the images
+image_dir = os.path.abspath(str(
+    sys.argv[1][:-1]))  # path to the directory containing the images
 output_dir = os.path.abspath(os.path.join(
     image_dir, os.pardir)) + "\\" + os.path.basename(
         image_dir) + " (preprocessed)\\"  # path to the output directory
