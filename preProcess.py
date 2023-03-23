@@ -131,7 +131,8 @@ image_dir = str(sys.argv[1])  # path to the directory containing the images
 output_dir = os.path.abspath(os.path.join(
     image_dir, os.pardir)) + "\\" + os.path.basename(
         image_dir) + " (preprocessed)\\"  # path to the output directory
-os.mkdir(output_dir)
+if not os.path.exists(output_dir):
+    os.mkdir(output_dir)
 output_size = 512  # output images size (square)
 offset_percent = 5  # offset percentage for croping the detected hand
 rotation_percent = 50  # offset percentage for hand straightening
