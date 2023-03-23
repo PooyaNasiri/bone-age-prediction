@@ -5,6 +5,7 @@ import os
 from scipy import ndimage
 import random
 import time
+import sys
 
 
 def clahe3(image, clip_limit=2.0, tile_grid_size=(8, 8)):
@@ -126,8 +127,11 @@ def _print():
 mp_drawing = mp.solutions.drawing_utils
 mphands = mp.solutions.hands
 hands = mphands.Hands()
-image_dir = "./Bone Age Data Set/Bone Age Training Set/Bone Age Training Set/boneage-training-dataset/boneage-training-dataset"  # path to the directory containing the images
-output_dir = "./Bone Age Data Set/Bone Age Training Set/Bone Age Training Set/boneage-training-dataset/boneage-training-dataset preprocessed"  # path to the output directory
+image_dir = str(sys.argv[1])  # path to the directory containing the images
+output_dir = os.path.abspath(os.path.join(
+    image_dir, os.pardir)) + "\\" + os.path.basename(
+        image_dir) + " (preprocessed)\\"  # path to the output directory
+os.mkdir(output_dir)
 output_size = 512  # output images size (square)
 offset_percent = 5  # offset percentage for croping the detected hand
 rotation_percent = 50  # offset percentage for hand straightening
