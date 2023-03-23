@@ -18,13 +18,9 @@ def clahe3(image, clip_limit=2.0, tile_grid_size=(8, 8)):
     return result
 
 
-def detectHand(img):
-    return hands.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-
-
 def handRec(img):
     global suc
-    result = detectHand(img)
+    result = hands.process(img)
     h, w, c = img.shape
     hand_landmarks = result.multi_hand_landmarks
     x_max = 0
@@ -84,7 +80,7 @@ def rescale(img):
 
 def getx(img):
     w, h, c = img.shape
-    result = detectHand(img)
+    result = hands.process(img)
     mx, wx = 0, 0
     if (result.multi_hand_landmarks):
         for hand_lm in result.multi_hand_landmarks:
@@ -116,16 +112,22 @@ def _print():
     os.system('cls')
     print(
         "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
-        "\nInput directory:  ", image_dir,
-        "\nOutput directory: ", output_dir,
+        "\nInput directory:  ", image_dir, "\nOutput directory: ", output_dir,
         "\nMethods: Hand Straightening |Hand Detection |CLAHE filter |Rescale |Random Flip And Rotate",
         "\nRunning time: %ss" % ("{:.2f}".format(time.time() - start_time)),
-        f"\nproccessed images: %s/%s (%%%s)" %(count, img_count, int((count / img_count * 100))),
-        "\nHand detection succsess rate: %", int(suc / count * 100))
+        f"\nproccessed images: %s/%s (%%%s)" %
+        (count, img_count, int(
+            (count / img_count * 100))), "\nHand detection succsess rate: %",
+        int(suc / count * 100))
+
 
 mp_drawing = mp.solutions.drawing_utils
 mphands = mp.solutions.hands
 hands = mphands.Hands()
+if (len(sys.argv) < 2):
+    print("You should give the input directory as an argument!",
+          "\nExample: py preProcess.py \'\\path_to_images\'")
+    exit(0)
 image_dir = os.path.abspath(str(
     sys.argv[1][:-1]))  # path to the directory containing the images
 output_dir = os.path.abspath(os.path.join(
@@ -154,5 +156,7 @@ for filename in os.listdir(image_dir):
         img = clahe3(img)  #adjust the brightness and contrast of the image
         img = rescale(img)  #rescale the image to <output_size>
         img = flipAndRotate(img)  #randomly flip and rotate the images
+        img = cv2.cvtColor(
+            img, cv2.COLOR_BGR2GRAY)  #Reduce the channels from 3 to 1
         cv2.imwrite(os.path.join(output_dir, filename), img)  #save
         _print()
