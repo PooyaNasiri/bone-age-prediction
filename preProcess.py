@@ -127,7 +127,7 @@ def _print():
 mp_drawing = mp.solutions.drawing_utils
 mphands = mp.solutions.hands
 hands = mphands.Hands()
-image_dir = str(sys.argv[1])  # path to the directory containing the images
+image_dir = str(sys.argv[1][:-1])  # path to the directory containing the images
 output_dir = os.path.abspath(os.path.join(
     image_dir, os.pardir)) + "\\" + os.path.basename(
         image_dir) + " (preprocessed)\\"  # path to the output directory
