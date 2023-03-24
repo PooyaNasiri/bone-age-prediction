@@ -1,11 +1,12 @@
-import cv2
+from scipy import ndimage
 import mediapipe as mp
 import numpy as np
-import os
-from scipy import ndimage
 import random
 import time
 import sys
+import cv2
+import os
+import platform
 
 
 def clahe3(image, clip_limit=2.0, tile_grid_size=(8, 8)):
@@ -124,15 +125,21 @@ def _print():
 mp_drawing = mp.solutions.drawing_utils
 mphands = mp.solutions.hands
 hands = mphands.Hands()
+
 if (len(sys.argv) < 2):
     print("You should give the input directory as an argument!",
-          "\nExample: py preProcess.py \'\\path_to_images\'")
+          "\nExample: py preProcess.py \'...path_to_images\'")
     exit(0)
 image_dir = os.path.abspath(str(
     sys.argv[1][:-1]))  # path to the directory containing the images
-output_dir = os.path.abspath(os.path.join(
-    image_dir, os.pardir)) + "\\" + os.path.basename(
-        image_dir) + " (preprocessed)\\"  # path to the output directory
+if (str(platform.system()).lower() == "windows"):
+    output_dir = os.path.abspath(os.path.join(
+        image_dir, os.pardir)) + "\\" + os.path.basename(
+            image_dir) + " (preprocessed)\\"  # path to the output directory
+else:
+    output_dir = os.path.abspath(os.path.join(
+        image_dir, os.pardir)) + "/" + os.path.basename(
+            image_dir) + " (preprocessed)/"  # path to the output directory
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 output_size = 512  # output images size (square)
