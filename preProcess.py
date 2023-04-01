@@ -114,6 +114,9 @@ def _print():
     print(
         "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
         "\nInput directory:  ", image_dir, "\nOutput directory: ", output_dir,
+        "\nOutput Size: ", output_size,
+        ("px | 3" if output_channel == 1 else "px | 1"), "Output channels | ",
+        ("With augmentations" if data_type == 1 else "Without augmentations"),
         "\nRunning time: %ss" % ("{:.2f}".format(time.time() - start_time)),
         f"\nproccessed images: %s/%s (%%%s)" %
         (count, img_count, int(
