@@ -114,7 +114,6 @@ def _print():
     print(
         "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
         "\nInput directory:  ", image_dir, "\nOutput directory: ", output_dir,
-        "\nMethods: Hand Straightening |Hand Detection |CLAHE filter |Rescale |Random Flip And Rotate",
         "\nRunning time: %ss" % ("{:.2f}".format(time.time() - start_time)),
         f"\nproccessed images: %s/%s (%%%s)" %
         (count, img_count, int(
@@ -125,6 +124,12 @@ def _print():
 mp_drawing = mp.solutions.drawing_utils
 mphands = mp.solutions.hands
 hands = mphands.Hands()
+
+output_size = 512  # output images size (square)
+offset_percent = 5  # offset percentage for croping the detected hand
+rotation_percent = 20  # offset percentage for hand straightening
+count = 0  # count of images which has been processed
+suc = 0  # count of images wihcn successfully found a hand in it
 
 if (len(sys.argv) < 2):
     print("You should give the input directory as an argument!",
@@ -140,17 +145,22 @@ else:
     output_dir = os.path.abspath(os.path.join(
         image_dir, os.pardir)) + "/" + os.path.basename(
             image_dir) + " (preprocessed)/"  # path to the output directory
+
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
-output_size = 512  # output images size (square)
-offset_percent = 5  # offset percentage for croping the detected hand
-rotation_percent = 50  # offset percentage for hand straightening
-count = 0  # count of images which has been processed
-suc = 0  # count of images wihcn successfully found a hand in it
 img_count = len([  # number of total images in the <image_dir> directory
     entry for entry in os.listdir(image_dir)
     if os.path.isfile(os.path.join(image_dir, entry))
 ])
+print("output size (ex: 256) :")
+output_size = int(input())
+
+print("Output channels :\n 1) RGB (3channels)\n 2) Grayscale (1channel)")
+output_channel = int(input())
+
+print("Which data :\n 1) Training data\n 2) Test/Validation data")
+data_type = int(input())
+
 start_time = time.time()
 for filename in os.listdir(image_dir):
     count += 1
@@ -158,12 +168,14 @@ for filename in os.listdir(image_dir):
     if (img is None):
         print("couldn't open image!")
     else:
-        img = rotate(img)  #rotate the hand to get a strait upward hand
-        img = handRec(img)  #detect the hand for croping the image
-        img = clahe3(img)  #adjust the brightness and contrast of the image
+        if (data_type == 1):
+            img = rotate(img)  #rotate the hand to get a strait upward hand
+            img = handRec(img)  #detect the hand for croping the image
+            img = clahe3(img)  #adjust the brightness and contrast of the image
         img = rescale(img)  #rescale the image to <output_size>
         img = flipAndRotate(img)  #randomly flip and rotate the images
-        img = cv2.cvtColor(
-            img, cv2.COLOR_BGR2GRAY)  #Reduce the channels from 3 to 1
+        if (output_channel == 1):
+            img = cv2.cvtColor(
+                img, cv2.COLOR_BGR2GRAY)  #Reduce the channels from 3 to 1
         cv2.imwrite(os.path.join(output_dir, filename), img)  #save
         _print()
