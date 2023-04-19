@@ -3,6 +3,4 @@
 *.zip
 *.csv
 *.xlsx
-hda-project.ipynb
-.gitignore
-preprocess.ipynb
+*.ipynb

@@ -21,7 +21,7 @@ def clahe3(image, clip_limit=2.0, tile_grid_size=(8, 8)):
 
 def handRec(img):
     global suc
-    result = hands.process(img)
+    result = mp.solutions.hands.Hands().process(img)
     h, w, c = img.shape
     hand_landmarks = result.multi_hand_landmarks
     x_max = 0
@@ -41,7 +41,7 @@ def handRec(img):
                 if y < y_min:
                     y_min = y
             # cv2.rectangle(img, (x_min, y_min), (x_max, h), (0, 255, 0), 2)
-            # mp_drawing.draw_landmarks(img, handLMs, mphands.HAND_CONNECTIONS)
+            # mp.solutions.drawing_utils.draw_landmarks(img, handLMs, mphands.HAND_CONNECTIONS)
         offset = int((h * offset_percent) / 100)
         y_min_new = y_min - offset
         x_min_new = x_min - offset
@@ -81,12 +81,13 @@ def rescale(img):
 
 def getx(img):
     w, h, c = img.shape
-    result = hands.process(img)
+    result = mp.solutions.hands.Hands().process(img)
     mx, wx = 0, 0
     if (result.multi_hand_landmarks):
         for hand_lm in result.multi_hand_landmarks:
-            mx = hand_lm.landmark[mphands.HandLandmark.MIDDLE_FINGER_TIP].x * w
-            wx = hand_lm.landmark[mphands.HandLandmark.WRIST].x * w
+            mx = hand_lm.landmark[
+                mp.solutions.hands.HandLandmark.MIDDLE_FINGER_TIP].x * w
+            wx = hand_lm.landmark[mp.solutions.hands.HandLandmark.WRIST].x * w
     return wx, mx
 
 
@@ -110,7 +111,7 @@ def flipAndRotate(img):
 
 
 def _print():
-    os.system('cls')
+    print("%c[%d;%df" % (0x1B, 0, 0), end='')
     print(
         "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
         "\nInput directory:  ", image_dir, "\nOutput directory: ", output_dir,
@@ -124,11 +125,6 @@ def _print():
         int(suc / count * 100))
 
 
-mp_drawing = mp.solutions.drawing_utils
-mphands = mp.solutions.hands
-hands = mphands.Hands()
-
-output_size = 512  # output images size (square)
 offset_percent = 5  # offset percentage for croping the detected hand
 rotation_percent = 20  # offset percentage for hand straightening
 count = 0  # count of images which has been processed
@@ -155,15 +151,14 @@ img_count = len([  # number of total images in the <image_dir> directory
     entry for entry in os.listdir(image_dir)
     if os.path.isfile(os.path.join(image_dir, entry))
 ])
-print("output size (ex: 256) :")
-output_size = int(input())
+output_size = int(input("Output size (ex: 256) :\n"))
+output_channel = int(
+    input(
+        "Output channels :\n 1) RGB (3channels)\n 2) Grayscale (1channel)\n"))
+data_type = int(
+    input("Which data :\n 1) Training data\n 2) Test/Validation data\n"))
 
-print("Output channels :\n 1) RGB (3channels)\n 2) Grayscale (1channel)")
-output_channel = int(input())
-
-print("Which data :\n 1) Training data\n 2) Test/Validation data")
-data_type = int(input())
-
+os.system('cls')
 start_time = time.time()
 for filename in os.listdir(image_dir):
     count += 1
@@ -177,7 +172,7 @@ for filename in os.listdir(image_dir):
             img = clahe3(img)  #adjust the brightness and contrast of the image
         img = rescale(img)  #rescale the image to <output_size>
         img = flipAndRotate(img)  #randomly flip and rotate the images
-        if (output_channel == 1):
+        if (output_channel == 2):
             img = cv2.cvtColor(
                 img, cv2.COLOR_BGR2GRAY)  #Reduce the channels from 3 to 1
         cv2.imwrite(os.path.join(output_dir, filename), img)  #save
