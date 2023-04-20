@@ -110,6 +110,7 @@ def flipAndRotate(img):
 
 
 def _print():
+    now = time.time() - start_time
     print("%c[%d;%df" % (0x1B, 0, 0), end='')
     print(
         "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
@@ -117,11 +118,11 @@ def _print():
         "\nOutput Size: ", output_size,
         ("px | 3" if output_channel == 1 else "px | 1"), "Output channels | ",
         ("With augmentations" if data_type == 1 else "Without augmentations"),
-        "\nRunning time: %ss" % ("{:.2f}".format(time.time() - start_time)),
+        "\nRunning time: %02d:%05.02f" % (int(now / 60), now % 60),
         f"\nproccessed images: %s/%s (%%%s)" %
         (count, img_count, int(
-            (count / img_count * 100))), "\nHand detection succsess rate: %",
-        int(suc / count * 100))
+            (count / img_count * 100))), "  \nHand detection succsess rate: %",
+        int(suc / count * 100), "   ")
 
 
 hands = mp.solutions.hands
@@ -172,7 +173,7 @@ for filename in os.listdir(image_dir):
             img = handRec(img)  #detect the hand for croping the image
             img = clahe3(img)  #adjust the brightness and contrast of the image
         img = rescale(img)  #rescale the image to <output_size>
-        img = flipAndRotate(img)  #randomly flip and rotate the images
+        # img = flipAndRotate(img)  #randomly flip and rotate the images
         if (output_channel == 2):
             img = cv2.cvtColor(
                 img, cv2.COLOR_BGR2GRAY)  #Reduce the channels from 3 to 1
