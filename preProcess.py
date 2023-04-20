@@ -21,7 +21,7 @@ def clahe3(image, clip_limit=2.0, tile_grid_size=(8, 8)):
 
 def handRec(img):
     global suc
-    result = mp.solutions.hands.Hands().process(img)
+    result = Hands.process(img)
     h, w, c = img.shape
     hand_landmarks = result.multi_hand_landmarks
     x_max = 0
@@ -81,13 +81,12 @@ def rescale(img):
 
 def getx(img):
     w, h, c = img.shape
-    result = mp.solutions.hands.Hands().process(img)
+    result = Hands.process(img)
     mx, wx = 0, 0
     if (result.multi_hand_landmarks):
         for hand_lm in result.multi_hand_landmarks:
-            mx = hand_lm.landmark[
-                mp.solutions.hands.HandLandmark.MIDDLE_FINGER_TIP].x * w
-            wx = hand_lm.landmark[mp.solutions.hands.HandLandmark.WRIST].x * w
+            mx = hand_lm.landmark[hands.HandLandmark.MIDDLE_FINGER_TIP].x * w
+            wx = hand_lm.landmark[hands.HandLandmark.WRIST].x * w
     return wx, mx
 
 
@@ -125,6 +124,8 @@ def _print():
         int(suc / count * 100))
 
 
+hands = mp.solutions.hands
+Hands = hands.Hands()
 offset_percent = 5  # offset percentage for croping the detected hand
 rotation_percent = 20  # offset percentage for hand straightening
 count = 0  # count of images which has been processed
