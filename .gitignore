@@ -4,3 +4,5 @@
 *.csv
 *.xlsx
 *.ipynb
+*.doc
+*.docx
