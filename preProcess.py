@@ -67,7 +67,7 @@ def handRec(img):
         return img
 
 
-def rescale(img):
+def resize(img):
     height, width = img.shape[:2]
     max_dim = max(height, width)
     square_img = np.zeros((max_dim, max_dim, 3), dtype=np.uint8)
@@ -116,8 +116,7 @@ def _print():
         "PREPROCESS ON HAND X-RAY IMAGES  |  2023"
         "\nInput directory:  ", image_dir, "\nOutput directory: ", output_dir,
         "\nOutput Size: ", output_size,
-        ("px | 3" if output_channel == 1 else "px | 1"), "Output channels | ",
-        ("With augmentations" if data_type == 1 else "Without augmentations"),
+        ("px | 3" if output_channel == 1 else "px | 1"), "Output channels ",
         "\nRunning time: %02d:%05.02f" % (int(now / 60), now % 60),
         f"\nproccessed images: %s/%s (%%%s)" %
         (count, img_count, int(
@@ -157,8 +156,6 @@ output_size = int(input("Output size (ex: 256) :\n"))
 output_channel = int(
     input(
         "Output channels :\n 1) RGB (3channels)\n 2) Grayscale (1channel)\n"))
-data_type = int(
-    input("Which data :\n 1) Training data\n 2) Test/Validation data\n"))
 
 os.system('cls')
 start_time = time.time()
@@ -168,13 +165,12 @@ for filename in os.listdir(image_dir):
     if (img is None):
         print("couldn't open image!")
     else:
-        if (data_type == 1):
-            img = rotate(img)  #rotate the hand to get a strait upward hand
-            img = handRec(img)  #detect the hand for croping the image
-            img = clahe3(img)  #adjust the brightness and contrast of the image
-        img = rescale(img)  #rescale the image to <output_size>
+        # img = rotate(img)  #rotate the hand to get a strait upward hand
+        img = handRec(img)  #detect the hand for croping the image
+        img = clahe3(img)  #adjust the brightness and contrast of the image
+        img = resize(img)  #resize the image to <output_size>
         # img = flipAndRotate(img)  #randomly flip and rotate the images
-        if (output_channel == 2):
+        if output_channel == 2:
             img = cv2.cvtColor(
                 img, cv2.COLOR_BGR2GRAY)  #Reduce the channels from 3 to 1
         cv2.imwrite(os.path.join(output_dir, filename), img)  #save
