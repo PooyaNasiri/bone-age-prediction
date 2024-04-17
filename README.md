@@ -6,9 +6,9 @@
 
 ## Authors
 
-- [@Pooya Nasiri](https://gitlab.com/pooya.nasiri75)
-- [@Bahador Mirzazadeh](https://gitlab.com/Baha2rM98)
-- [@Rastin Akbari](https://gitlab.com/)
+- [@Pooya Nasiri](https://github.com/PooyaNasiri)
+- [@Bahador Mirzazadeh](https://github.com/Baha2rM98)
+- [@Mohammadhossein Akbari](https://github.com/r4stin)
 ## Documentation
 
 [https://www.rsna.org/education/ai-resources-and-training/ai-image-challenge/rsna-pediatric-bone-age-challenge-2017](https://www.rsna.org/education/ai-resources-and-training/ai-image-challenge/rsna-pediatric-bone-age-challenge-2017)
